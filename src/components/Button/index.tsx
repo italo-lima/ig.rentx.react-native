@@ -17,12 +17,16 @@ interface Props extends RectButtonProps{
 export default function Button({
   title,
   color,
+  onPress,
   ...rest
 }: Props) {
   const theme = useTheme()
 
   return (
-    <Container color={color ? color : theme.colors.main} >
+    <Container
+      color={color ? color : theme.colors.main}
+      onPress={onPress}
+    >
       <Title light={false}>{title}</Title>
     </Container>
   )
