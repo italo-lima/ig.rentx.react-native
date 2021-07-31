@@ -4,7 +4,8 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "web": "expo start --web",
-    "start": "react-native start"
+    "start": "react-native start",
+    "api": "yarn json-server -d 1000 -H 10.0.0.108 -p 3000 ./src/services/server.json"
   },
   "dependencies": {
     "@expo-google-fonts/archivo": "^0.2.0",
@@ -12,12 +13,14 @@
     "@react-native-community/masked-view": "0.1.10",
     "@react-navigation/native": "^5.9.4",
     "@react-navigation/stack": "^5.14.5",
+    "axios": "^0.21.1",
     "expo": "~42.0.1",
     "expo-app-loading": "^1.1.2",
     "expo-font": "^9.2.1",
     "expo-splash-screen": "~0.11.2",
     "expo-status-bar": "~1.0.4",
     "expo-updates": "~0.8.1",
+    "json-server": "^0.16.3",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "~0.63.4",
