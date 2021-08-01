@@ -1,6 +1,5 @@
 import styled from 'styled-components/native';
 import { Dimensions } from 'react-native';
-import FastImage from 'react-native-fast-image'
 
 export const Container = styled.View`
   width: 100%;

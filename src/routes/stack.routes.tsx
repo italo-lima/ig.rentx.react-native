@@ -15,13 +15,13 @@ const { Navigator, Screen } = createStackNavigator()
 
 export function StackRoutes() {
   return (
-    <Navigator headerMode="none">
+    <Navigator headerMode="none" initialRouteName="Splash">
+      <Screen name="Splash" component={Splash} />
       <Screen name="Home" component={Home} />
       <Screen name="CarDetails" component={CarDetails} />
       <Screen name="Confirmation" component={Confirmation} />
       <Screen name="Scheduling" component={Scheduling} />
       <Screen name="SchedulingDetails" component={SchedulingDetails} />
-      <Screen name="Splash" component={Splash} />
       <Screen name="MyCars" component={MyCars} />
     </Navigator>
   )
