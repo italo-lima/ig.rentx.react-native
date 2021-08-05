@@ -36,7 +36,7 @@ import {
   RentalPriceTotal
 } from './styles';
 import { CarDTO } from '../../dtos/Car.dto';
-import { getAccesoryIcon } from '../../utils/getAccesoryIcon';
+import { getAccessoryIcon } from '../../utils/getAccessoryIcon';
 import { getPlatformDate } from '../../utils/getPlatformDate';
 import { api } from '../../services/api';
 
@@ -129,7 +129,7 @@ export function SchedulingDetails() {
             <Accessory
               key={accessory.name}
               name={accessory.name}
-              icon={getAccesoryIcon(accessory.type)} />
+              icon={getAccessoryIcon(accessory.type)} />
           ))}
         </Accessories>
 
