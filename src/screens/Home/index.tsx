@@ -1,5 +1,5 @@
 import React, {useEffect,useState} from "react"
-import { StatusBar, StyleSheet } from 'react-native';
+import { BackHandler, StatusBar, StyleSheet } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize";
 import { useNavigation } from "@react-navigation/native"
 import { Ionicons } from "@expo/vector-icons"
@@ -14,6 +14,7 @@ import { RectButton, PanGestureHandler } from "react-native-gesture-handler";
 
 import Logo from "../../assets/logo.svg"
 import { Car } from "../../components/Car";
+import { LoadAnimation } from "../../components/LoadAnimation";
 
 import {
   CarList,
@@ -24,7 +25,6 @@ import {
 } from "./styles"
 import { api } from "../../services/api";
 import { CarDTO } from "../../dtos/Car.dto";
-import { Load } from "../../components/Load";
 
 const ButtonAnimated = Animated.createAnimatedComponent(RectButton)
 
@@ -84,6 +84,10 @@ export function Home() {
     fetchCars()
   }, [])
 
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', () => true)
+  }, [])
+
   return (
     <Container>
       <StatusBar
@@ -97,13 +101,15 @@ export function Home() {
             width={RFValue(108)}
             height={RFValue(12)}
           />
-          <TotalCars>
-            Total de {cars.length} carros
-          </TotalCars>
+          {!loading && (
+            <TotalCars>
+              Total de {cars.length} carros
+            </TotalCars>
+          )}
         </HeaderContent>
       </Header>
 
-      {loading ? <Load /> : (
+      {loading ? <LoadAnimation /> : (
         <CarList
           data={cars}
           keyExtractor={item => item.id}
