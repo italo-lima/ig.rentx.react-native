@@ -25,11 +25,11 @@ export function Confirmation(){
   const { width } = useWindowDimensions();
 
   const navigation = useNavigation();
-  // const route = useRoute();
-  // const { title, message, nextScreenRoute } = route.params as Params;
+  const route = useRoute();
+  const { title, message, nextScreenRoute } = route.params as Params;
 
   function handleConfirm() {
-    navigation.navigate("Home");
+    navigation.navigate(nextScreenRoute);
   }
 
   return (
@@ -44,10 +44,10 @@ export function Confirmation(){
 
       <Content>
         <DoneSvg width={80} height={80}/>
-        <Title>OK</Title>
+        <Title>{title}</Title>
 
         <Message>
-          OK
+          {message}
         </Message>
       </Content>
 
