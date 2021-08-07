@@ -68,7 +68,7 @@ export function SecondStep(){
         message: `Agora é só fazer login\ne aproveitar.`
       });
     })
-    .catch(() => {      
+      .catch(() => {
       Alert.alert('Opa', 'Não foi possível cadastrar');
     });
   }
