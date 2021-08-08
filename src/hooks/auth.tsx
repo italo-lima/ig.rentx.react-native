@@ -8,8 +8,8 @@ import React, {
 } from 'react';
 
 import { api } from '../services/api';
-// import { database } from '../database';
-// import { User as ModelUser } from '../database/model/User';
+import { database } from '../database';
+import { User as ModelUser } from '../database/model/user';
 
 interface User {
   id: string;
@@ -28,6 +28,7 @@ interface SignInCredentials {
 
 interface AuthContextData {
   user: User;
+  loading: Boolean;
   signIn: (credentials: SignInCredentials) => Promise<void>;
   signOut: () => Promise<void>;
   updatedUser: (user: User) => Promise<void>;
@@ -41,6 +42,7 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 function AuthProvider({ children } : AuthProviderProps) {
   const [data, setData] = useState<User>({} as User);
+  const [loading, setLoading] = useState(true)
 
   async function signIn({ email, password } : SignInCredentials) {
     try{
@@ -51,37 +53,36 @@ function AuthProvider({ children } : AuthProviderProps) {
 
       const { token, user } = response.data;
 
-      // api.defaults.headers['authorization'] = `Bearer ${token}`;
+      api.defaults.headers.authorization = `Bearer ${token}`;
 
-      // const userCollection = database.get<ModelUser>('users');
-      // await database.action(async () => {
-      //   await userCollection.create(( newUser ) => {
-      //     newUser.user_id = user.id,
-      //     newUser.name = user.name,
-      //     newUser.email = user.email,
-      //     newUser.driver_license = user.driver_license,
-      //     newUser.avatar = user.avatar,
-      //     newUser.token = token
-      //   })
-      // });
+      const userCollection = database.get<ModelUser>('users');
+      await database.write(async () => {
+        await userCollection.create((newUser) => {
+          newUser.user_id = user.id
+          newUser.name = user.name
+          newUser.email = user.email
+          newUser.driver_license = user.driver_license
+          newUser.avatar = user.avatar
+          newUser.token = user.token
+        })
+      })
   
       setData({ ...user, token });
 
     } catch (error) {
-      console.log(error)
       throw new Error(error);
     }
   }
 
   async function signOut() {
     try {
-      // const userCollection = database.get<ModelUser>('users');
-      // await database.action(async () => {
-      //   const userSelected = await userCollection.find(data.id);
-      //   await userSelected.destroyPermanently();
-      // });
+      const userCollection = database.get<ModelUser>('users');
+      await database.write(async () => {
+        const userSelected = await userCollection.find(data.id);
+        await userSelected.destroyPermanently();
+      });
 
-      // setData({} as User);
+      setData({} as User);
     } catch (error) {
       throw new Error(error);
     }
@@ -89,17 +90,17 @@ function AuthProvider({ children } : AuthProviderProps) {
 
   async function updatedUser(user: User) {
     try {
-      // const userCollection = database.get<ModelUser>('users');
-      // await database.action(async () => {
-      //   const userSelected = await userCollection.find(user.id);
-      //   await userSelected.update(( userData ) => {
-      //     userData.name = user.name,
-      //     userData.driver_license = user.driver_license,
-      //     userData.avatar = user.avatar
-      //   });
-      // });
+      const userCollection = database.get<ModelUser>('users');
+      await database.write(async () => {
+        const userSelected = await userCollection.find(user.id);
+        await userSelected.update(( userData ) => {
+          userData.name = user.name,
+          userData.driver_license = user.driver_license,
+          userData.avatar = user.avatar
+        });
+      });
 
-      // setData(user);
+      setData(user);
       
     } catch (error) {      
       throw new Error(error);
@@ -108,14 +109,15 @@ function AuthProvider({ children } : AuthProviderProps) {
 
   useEffect(() => {
     async function loadUserData() {
-      // const userCollection = database.get<ModelUser>('users');
-      // const response = await userCollection.query().fetch();
+      const userCollection = database.get<ModelUser>('users');
+      const response = await userCollection.query().fetch();
      
-      // if(response.length > 0){
-      //   const userData = response[0]._raw as unknown as User;
-      //   api.defaults.headers.authorization = `Bearer ${userData.token}`;
-      //   setData(userData);
-      // }
+      if(response.length > 0){
+        const userData = response[0]._raw as unknown as User;
+        api.defaults.headers.authorization = `Bearer ${userData.token}`;
+        setData(userData);
+        setLoading(false)
+      }
     }
 
     loadUserData();
@@ -125,6 +127,7 @@ function AuthProvider({ children } : AuthProviderProps) {
     <AuthContext.Provider 
       value={{
         user: data,
+        loading,
         signIn,
         signOut,
         updatedUser

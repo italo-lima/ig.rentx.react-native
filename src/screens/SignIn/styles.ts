@@ -9,7 +9,7 @@ export const Container = styled.View`
 
 export const Header = styled.View`
   width: 100%;
-  margin-top: ${getStatusBarHeight() + 116}px;
+  margin-top: ${getStatusBarHeight() + 96}px;
 `;
 
 export const Title = styled.Text`

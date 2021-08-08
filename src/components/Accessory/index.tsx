@@ -23,7 +23,7 @@ export function Accessory({
       <Icon 
         width={32} 
         height={32} 
-        fill={theme.colors.header} 
+        fill={theme.colors.header}
       />
       <Name>{name}</Name>
     </Container>

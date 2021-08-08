@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { StatusBar, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from "@react-navigation/native"
 import { useTheme } from 'styled-components'; 
@@ -10,7 +10,7 @@ import Animated, {
   Extrapolate
 } from 'react-native-reanimated';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
-// import { useNetInfo } from '@react-native-community/netinfo';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 import { Accessory } from '../../components/Accessory';
 import { BackButton } from '../../components/BackButton';
@@ -27,12 +27,15 @@ import {
   Footer,
   Header,
   Name,
+  OfflineInfo,
   Period,
   Price,
   Rent
 } from './styles';
-import { CarDTO } from '../../dtos/Car.dto';
 import { getAccessoryIcon } from '../../utils/getAccessoryIcon';
+import { Car as ModelCar } from '../../database/model/car';
+import { CarDTO } from '../../dtos/Car.dto';
+import { api } from '../../services/api';
 
 interface Params {
   car: CarDTO
@@ -41,6 +44,7 @@ interface Params {
 export function CarDetails() {
   const [carUpdate, setCarUpdate] = useState<CarDTO>({} as CarDTO);
 
+  const netInfo = useNetInfo();
   const theme = useTheme()
   const navigation = useNavigation()
   const route = useRoute() 
@@ -81,6 +85,16 @@ export function CarDetails() {
     navigation.goBack()
   }
 
+  useEffect(() => {
+    async function fetchOnlineData() {
+      const response = await api.get(`cars/${car.id}`);
+      setCarUpdate(response.data);
+    }
+
+    if(!!netInfo.isConnected) fetchOnlineData()
+  },[netInfo.isConnected])
+
+
   return (
     <Container>
       <StatusBar 
@@ -102,12 +116,11 @@ export function CarDetails() {
 
         <Animated.View style={sliderCarsStyleAnimation}>
           <CarImages>
-              <ImageSlider
-                imagesUrl={car.photos}
-              // imagesUrl={
-              //   !!carUpdate.photos ? 
-              //   carUpdate.photos : [{ id: car.thumbnail, photo: car.thumbnail }]
-              // } 
+            <ImageSlider
+              imagesUrl={
+                !!carUpdate.photos ? 
+                carUpdate.photos : [{ id: car.thumbnail, photo: car.thumbnail }]
+              } 
             />
           </CarImages>
         </Animated.View>
@@ -130,9 +143,7 @@ export function CarDetails() {
 
           <Rent>
             <Period>{car.period}</Period>
-            <Price>R$ {car.price}</Price>
-            {/* <Period>{car.period}</Period> */}
-            {/* <Price>R$ {netInfo.isConnected ? car.price : '...'}</Price> */}
+            <Price>R$ {!!netInfo.isConnected ? car.price : '...'}</Price>
           </Rent>
         </Details>
 
@@ -166,15 +177,15 @@ export function CarDetails() {
       <Button 
         title="Escolher período do aluguel" 
         onPress={handleConfirmRental}
-        // enabled={netInfo.isConnected}
+        enabled={!!netInfo.isConnected}
       />
 
-      {/* {
+      {
         !netInfo.isConnected &&
         <OfflineInfo>
         Conecte-se a internet para ver mais detalhes e agendar seu carro.
         </OfflineInfo>
-      } */}
+      }
     </Footer>
   </Container>
   )
