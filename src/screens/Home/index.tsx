@@ -37,7 +37,6 @@ export function Home() {
       pullChanges: async ({ lastPulledAt }) => {
         const { data } = await api.get(`cars/sync/pull?lastPulledVersion=${lastPulledAt || 0}`)
         const { changes, latestVersion } = data
-        console.log("pull", changes)
         return {changes, timestamp: latestVersion}
       },
       pushChanges: async ({changes}) => {

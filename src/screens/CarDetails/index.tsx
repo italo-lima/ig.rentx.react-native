@@ -164,11 +164,6 @@ export function CarDetails() {
 
         <About>
           {car.about}
-          {car.about}
-          {car.about}
-          {car.about}
-          {car.about}
-          {car.about}
         </About>
 
     </Animated.ScrollView>
